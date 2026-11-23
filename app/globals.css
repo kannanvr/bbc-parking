@@ -1,0 +1,34 @@
+:root {
+  --bg: #e9eeec; --ink: #13221e; --muted: #5a6b66; --card: #fff;
+  --line: #cdd8d4; --accent: #17604f; --accent-dark: #0f453a;
+  --error: #a62b2b; --ok: #17604f;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); min-height: 100vh; }
+main { max-width: 480px; margin: 0 auto; padding: 32px 20px 48px; }
+h1 { font-size: 1.7rem; line-height: 1.15; margin: 0 0 6px; font-weight: 800; }
+.sub { color: var(--muted); margin: 0 0 24px; line-height: 1.45; }
+form { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 22px; display: grid; gap: 18px; }
+label { display: grid; gap: 6px; font-weight: 600; font-size: .95rem; }
+label small { font-weight: 400; color: var(--muted); }
+input { font: inherit; padding: 13px 14px; border: 1.5px solid var(--line); border-radius: 9px; background: #fbfdfc; }
+input.plate { text-transform: uppercase; letter-spacing: .12em; font-weight: 700; font-size: 1.15rem; }
+input:focus-visible, button:focus-visible { outline: 3px solid #7fbfae; outline-offset: 1px; }
+button { font: inherit; font-weight: 700; padding: 14px; border: 0; border-radius: 9px; background: var(--accent); color: #fff; cursor: pointer; }
+button:hover:not(:disabled) { background: var(--accent-dark); }
+button:disabled { opacity: .6; cursor: wait; }
+.msg { margin-top: 18px; padding: 14px 16px; border-radius: 10px; line-height: 1.45; }
+.msg.ok { background: #dcefe9; color: var(--ok); }
+.msg.err { background: #f6dcdc; color: var(--error); }
+@media (prefers-reduced-motion: no-preference) { button { transition: background .15s; } }
+
+/* report page */
+main.wide { max-width: 860px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 22px; margin-bottom: 18px; }
+.controls { display: grid; gap: 16px; grid-template-columns: 1fr 1fr; }
+.controls button { align-self: end; }
+button.alt { background: #fff; color: var(--accent); border: 1.5px solid var(--accent); }
+.scroll { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: .95rem; }
+th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+@media (max-width: 560px) { .controls { grid-template-columns: 1fr; } }
