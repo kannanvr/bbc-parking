@@ -18,9 +18,15 @@ export async function POST(req) {
     if (!apt) return Response.json({ error: 'Enter the apartment number.' }, { status: 400 });
 
     const key = apt.toUpperCase().replace(/[\s\-_/]/g, '');
-    const [resident] = await sql`
-      SELECT apartment, name, email FROM residents
-      WHERE regexp_replace(upper(apartment), '[\s\-_/]', '', 'g') = ${key}`;
+    let resident;
+    try {
+      [resident] = await sql`
+        SELECT apartment, name, email FROM residents
+        WHERE regexp_replace(upper(apartment), '[\s\-_/]', '', 'g') = ${key}`;
+    } catch (err) {
+      console.error('DB lookup failed:', err.message);
+      return Response.json({ error: 'Database problem: check DATABASE_URL in Vercel and that "npm run setup" was run.' }, { status: 500 });
+    }
     if (!resident) {
       return Response.json({ error: `No resident found for apartment ${apt}. Check the number.` }, { status: 404 });
     }
@@ -42,6 +48,7 @@ export async function POST(req) {
       (charge ? `Charge: ${charge}\n\n` : '') +
       `Please contact the association if you have any questions.\n\nBBC City Park Association`;
 
+    try {
     await transporter.sendMail({
       from: process.env.MAIL_FROM || process.env.SMTP_USER,
       to: resident.email,
@@ -49,10 +56,18 @@ export async function POST(req) {
       subject: `Parking charge – ${shownPlate} (Apt ${resident.apartment})`,
       text,
     });
+    } catch (err) {
+      console.error('Mail failed:', err.message);
+      return Response.json({ error: 'Email could not be sent: check the SMTP settings (host, port, user, app password) in Vercel.' }, { status: 502 });
+    }
 
     // Log only after the mail has gone out
-    await sql`INSERT INTO notices (vehicle, apartment, sent_to)
-              VALUES (${shownPlate}, ${resident.apartment}, ${resident.email})`;
+    try {
+      await sql`INSERT INTO notices (vehicle, apartment, sent_to)
+                VALUES (${shownPlate}, ${resident.apartment}, ${resident.email})`;
+    } catch (err) {
+      console.error('Notice log failed:', err.message);
+    }
 
     return Response.json({ message: `Notice sent to apartment ${resident.apartment} and the association.` });
   } catch (err) {

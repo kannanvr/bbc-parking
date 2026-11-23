@@ -29,6 +29,8 @@ export default function Home() {
   }
 
   return (
+    <div className="shell">
+      <img className="photo" src="/bbc-city-park.png" alt="BBC City Park apartment building" width="355" height="399" />
     <main>
       <h1>BBC City Park<br />Parking charge notice</h1>
       <p className="sub">
@@ -54,5 +56,6 @@ export default function Home() {
 
       {status && <div className={`msg ${status.type}`} role="status">{status.text}</div>}
     </main>
+    </div>
   );
 }
